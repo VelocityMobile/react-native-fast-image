@@ -11,9 +11,9 @@ import {
 
 const FastImageViewNativeModule = NativeModules.FastImageView
 
-function FastImageBase({
+const FastImage = forwardRef((
+    {
     source,
-    tintColor,
     onLoadStart,
     onProgress,
     onLoad,
@@ -24,7 +24,8 @@ function FastImageBase({
     fallback,
     forwardedRef,
     ...props
-}) {
+    },
+    ref) => {
     const resolvedSource = Image.resolveAssetSource(source)
 
     if (fallback) {
@@ -32,7 +33,6 @@ function FastImageBase({
             <View style={[styles.imageContainer, style]} ref={forwardedRef}>
                 <Image
                     {...props}
-                    tintColor={tintColor}
                     style={StyleSheet.absoluteFill}
                     source={resolvedSource}
                     onLoadStart={onLoadStart}
@@ -50,7 +50,6 @@ function FastImageBase({
         <View style={[styles.imageContainer, style]} ref={forwardedRef}>
             <FastImageView
                 {...props}
-                tintColor={tintColor}
                 style={StyleSheet.absoluteFill}
                 source={resolvedSource}
                 onFastImageLoadStart={onLoadStart}
@@ -62,13 +61,7 @@ function FastImageBase({
             {children}
         </View>
     )
-}
-
-const FastImageMemo = memo(FastImageBase)
-
-const FastImage = forwardRef((props, ref) => (
-    <FastImageMemo forwardedRef={ref} {...props} />
-))
+})
 
 FastImage.displayName = 'FastImage'
 
@@ -121,7 +114,6 @@ const FastImageSourcePropType = PropTypes.shape({
 FastImage.propTypes = {
     ...ViewPropTypes,
     source: PropTypes.oneOfType([FastImageSourcePropType, PropTypes.number]),
-    tintColor: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onLoadStart: PropTypes.func,
     onProgress: PropTypes.func,
     onLoad: PropTypes.func,
